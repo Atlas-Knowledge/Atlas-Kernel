@@ -2,122 +2,221 @@
  * ACCS-0001
  * AFM-001
  *
- * Canonical Atlas Identifier
+ * Identifier Factory
  */
 
+import { Identifier } from './Identifier';
+import { IdentifierParser } from './IdentifierParser';
+import { IdentifierPolicy } from './IdentifierPolicy';
 import type { IdentifierType } from './IdentifierType';
 import { Namespace } from './Namespace';
+import { IdentifierValidator } from './IdentifierValidator';
 
-/**
- * Immutable canonical Atlas identifier.
- *
- * Format:
- *
- * namespace:type:localId
- *
- * Example:
- *
- * atlas:entity:earth
- */
-export class Identifier<
+export interface CreateIdentifierOptions<
   TNamespace extends string = string,
   TType extends IdentifierType = IdentifierType,
 > {
-  readonly #namespace: Namespace;
-  readonly #type: TType;
-  readonly #localId: string;
-  readonly #value: `${TNamespace}:${TType}:${string}`;
+  readonly namespace: TNamespace;
+  readonly type: TType;
+  readonly localId: string;
+}
 
+/**
+ * Public factory responsible for creating
+ * canonical Atlas identifiers.
+ */
+export class IdentifierFactory {
   /**
-   * Constructor is intentionally private.
-   *
-   * Instances MUST be created through IdentifierFactory.
+   * Creates a new identifier.
    */
-  private constructor(
-    namespace: Namespace,
-    type: TType,
-    localId: string,
-  ) {
-    this.#namespace = namespace;
-    this.#type = type;
-    this.#localId = localId;
-
-    this.#value =
-      `${namespace.value}:${type}:${localId}` as `${TNamespace}:${TType}:${string}`;
-
-    Object.freeze(this);
-  }
-
-  /**
-   * @internal
-   *
-   * Creates an Identifier instance.
-   *
-   * This method is intended to be used exclusively by IdentifierFactory.
-   */
-  public static unsafeCreate<
+  public static create<
     TNamespace extends string,
     TType extends IdentifierType,
   >(
-    namespace: Namespace,
+    options: CreateIdentifierOptions<TNamespace, TType>,
+  ): Identifier<TNamespace, TType> {
+    IdentifierValidator.validateNamespace(options.namespace);
+    IdentifierValidator.validateType(options.type);
+    IdentifierValidator.validateLocalId(options.localId);
+
+    return Identifier.unsafeCreate(
+      Namespace.create(options.namespace),
+      options.type,
+      options.localId,
+    );
+  }
+
+  /**
+   * Creates an identifier from its canonical string.
+   *
+   * Example:
+   *
+   * atlas:entity:earth
+   */
+  public static fromString<
+    TNamespace extends string,
+    TType extends IdentifierType,
+  >(
+    identifier: string,
+  ): Identifier<TNamespace, TType> {
+    IdentifierValidator.validateCanonical(identifier);
+
+    const parsed = IdentifierParser.parse(identifier);
+
+    return this.create({
+      namespace: parsed.namespace as TNamespace,
+      type: parsed.type as TType,
+      localId: parsed.localId,
+    });
+  }
+
+  /**
+   * Creates an Atlas Entity identifier.
+   */
+  public static entity(
+    localId: string,
+  ): Identifier<'atlas', 'entity'> {
+    return this.create({
+      namespace: IdentifierPolicy.DEFAULT_NAMESPACE,
+      type: 'entity',
+      localId,
+    });
+  }
+
+  /**
+   * Creates an Atlas Knowledge identifier.
+   */
+  public static knowledge(
+    localId: string,
+  ): Identifier<'atlas', 'knowledge'> {
+    return this.create({
+      namespace: IdentifierPolicy.DEFAULT_NAMESPACE,
+      type: 'knowledge',
+      localId,
+    });
+  }
+
+  /**
+   * Creates an Atlas Evidence identifier.
+   */
+  public static evidence(
+    localId: string,
+  ): Identifier<'atlas', 'evidence'> {
+    return this.create({
+      namespace: IdentifierPolicy.DEFAULT_NAMESPACE,
+      type: 'evidence',
+      localId,
+    });
+  }
+
+  /**
+   * Creates an Atlas Claim identifier.
+   */
+  public static claim(
+    localId: string,
+  ): Identifier<'atlas', 'claim'> {
+    return this.create({
+      namespace: IdentifierPolicy.DEFAULT_NAMESPACE,
+      type: 'claim',
+      localId,
+    });
+  }
+
+  /**
+   * Creates an Atlas Dataset identifier.
+   */
+  public static dataset(
+    localId: string,
+  ): Identifier<'atlas', 'dataset'> {
+    return this.create({
+      namespace: IdentifierPolicy.DEFAULT_NAMESPACE,
+      type: 'dataset',
+      localId,
+    });
+  }
+
+  /**
+   * Creates an Atlas Observation identifier.
+   */
+  public static observation(
+    localId: string,
+  ): Identifier<'atlas', 'observation'> {
+    return this.create({
+      namespace: IdentifierPolicy.DEFAULT_NAMESPACE,
+      type: 'observation',
+      localId,
+    });
+  }
+
+  /**
+   * Creates an Atlas Question identifier.
+   */
+  public static question(
+    localId: string,
+  ): Identifier<'atlas', 'question'> {
+    return this.create({
+      namespace: IdentifierPolicy.DEFAULT_NAMESPACE,
+      type: 'question',
+      localId,
+    });
+  }
+
+  /**
+   * Creates an Atlas Discovery identifier.
+   */
+  public static discovery(
+    localId: string,
+  ): Identifier<'atlas', 'discovery'> {
+    return this.create({
+      namespace: IdentifierPolicy.DEFAULT_NAMESPACE,
+      type: 'discovery',
+      localId,
+    });
+  }
+
+  /**
+   * Creates an Atlas User identifier.
+   */
+  public static user(
+    localId: string,
+  ): Identifier<'atlas', 'user'> {
+    return this.create({
+      namespace: IdentifierPolicy.DEFAULT_NAMESPACE,
+      type: 'user',
+      localId,
+    });
+  }
+
+  /**
+   * Creates an Atlas Graph identifier.
+   */
+  public static graph(
+    localId: string,
+  ): Identifier<'atlas', 'graph'> {
+    return this.create({
+      namespace: IdentifierPolicy.DEFAULT_NAMESPACE,
+      type: 'graph',
+      localId,
+    });
+  }
+
+  /**
+   * Creates a custom identifier.
+   *
+   * Intended for plugins and external namespaces.
+   */
+  public static custom<
+    TNamespace extends string,
+    TType extends IdentifierType,
+  >(
+    namespace: TNamespace,
     type: TType,
     localId: string,
   ): Identifier<TNamespace, TType> {
-    return new Identifier(
+    return this.create({
       namespace,
       type,
       localId,
-    ) as Identifier<TNamespace, TType>;
+    });
   }
-
-  /**
-   * Canonical identifier value.
-   */
-  public get value(): `${TNamespace}:${TType}:${string}` {
-    return this.#value;
-  }
-
-  /**
-   * Namespace.
-   */
-  public get namespace(): Namespace {
-    return this.#namespace;
-  }
-
-  /**
-   * Identifier type.
-   */
-  public get type(): TType {
-    return this.#type;
-  }
-
-  /**
-   * Local identifier.
-   */
-  public get localId(): string {
-    return this.#localId;
-  }
-
-  /**
-   * Returns the canonical identifier string.
-   */
-  public toString(): string {
-    return this.#value;
-  }
-
-  /**
-   * JSON serialization.
-   */
-  public toJSON(): string {
-    return this.#value;
-  }
-
-  /**
-   * Equality comparison.
-   */
-  public equals(
-    other: Identifier<string, IdentifierType>,
-  ): boolean {
-    return this.#value === other.value;
-  }
-}
+      }
