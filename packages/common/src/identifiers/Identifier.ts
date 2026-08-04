@@ -9,7 +9,7 @@ import type { IdentifierType } from './IdentifierType';
 import { Namespace } from './Namespace';
 
 /**
- * Generic immutable Atlas identifier.
+ * Immutable canonical Atlas identifier.
  *
  * Format:
  *
@@ -28,6 +28,11 @@ export class Identifier<
   readonly #localId: string;
   readonly #value: `${TNamespace}:${TType}:${string}`;
 
+  /**
+   * Constructor is intentionally private.
+   *
+   * Instances MUST be created through IdentifierFactory.
+   */
   private constructor(
     namespace: Namespace,
     type: TType,
@@ -39,23 +44,29 @@ export class Identifier<
 
     this.#value =
       `${namespace.value}:${type}:${localId}` as `${TNamespace}:${TType}:${string}`;
+
+    Object.freeze(this);
   }
 
   /**
-   * Creates a new canonical identifier.
+   * @internal
+   *
+   * Creates an Identifier instance.
+   *
+   * This method is intended to be used exclusively by IdentifierFactory.
    */
-  public static create<
+  public static unsafeCreate<
     TNamespace extends string,
     TType extends IdentifierType,
-  >(params: {
-    namespace: Namespace;
-    type: TType;
-    localId: string;
-  }): Identifier<TNamespace, TType> {
+  >(
+    namespace: Namespace,
+    type: TType,
+    localId: string,
+  ): Identifier<TNamespace, TType> {
     return new Identifier(
-      params.namespace,
-      params.type,
-      params.localId,
+      namespace,
+      type,
+      localId,
     ) as Identifier<TNamespace, TType>;
   }
 
@@ -88,7 +99,7 @@ export class Identifier<
   }
 
   /**
-   * String representation.
+   * Returns the canonical identifier string.
    */
   public toString(): string {
     return this.#value;
@@ -105,7 +116,7 @@ export class Identifier<
    * Equality comparison.
    */
   public equals(
-    other: Identifier<unknown extends string ? string : string, IdentifierType>,
+    other: Identifier<string, IdentifierType>,
   ): boolean {
     return this.#value === other.value;
   }
