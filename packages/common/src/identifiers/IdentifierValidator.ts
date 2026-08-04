@@ -21,19 +21,27 @@ import {
   InvalidNamespaceError,
 } from './errors';
 
+import { IdentifierPolicy } from './IdentifierPolicy';
+
 export class IdentifierValidator {
   /**
    * Returns true if the namespace is valid.
    */
   public static isValidNamespace(namespace: string): boolean {
-    return NAMESPACE_REGEX.test(namespace);
+    return (
+      NAMESPACE_REGEX.test(namespace) &&
+      IdentifierPolicy.isReservedNamespace(namespace)
+    );
   }
 
   /**
    * Returns true if the identifier type is valid.
    */
   public static isValidType(type: string): boolean {
-    return IDENTIFIER_TYPE_REGEX.test(type);
+    return (
+      IDENTIFIER_TYPE_REGEX.test(type) &&
+      IdentifierPolicy.isAllowedType(type)
+    );
   }
 
   /**
@@ -44,14 +52,14 @@ export class IdentifierValidator {
   }
 
   /**
-   * Returns true if the canonical identifier is valid.
+   * Returns true if the canonical identifier format is valid.
    */
-  public static isCanonical(value: string): boolean {
-    return CANONICAL_IDENTIFIER_REGEX.test(value);
+  public static isCanonical(identifier: string): boolean {
+    return CANONICAL_IDENTIFIER_REGEX.test(identifier);
   }
 
   /**
-   * Validates namespace.
+   * Validates a namespace.
    */
   public static validateNamespace(namespace: string): void {
     if (!this.isValidNamespace(namespace)) {
@@ -60,7 +68,7 @@ export class IdentifierValidator {
   }
 
   /**
-   * Validates identifier type.
+   * Validates an identifier type.
    */
   public static validateType(type: string): void {
     if (!this.isValidType(type)) {
@@ -69,7 +77,7 @@ export class IdentifierValidator {
   }
 
   /**
-   * Validates local identifier.
+   * Validates a local identifier.
    */
   public static validateLocalId(localId: string): void {
     if (!this.isValidLocalId(localId)) {
@@ -78,7 +86,7 @@ export class IdentifierValidator {
   }
 
   /**
-   * Validates a canonical identifier.
+   * Validates a canonical identifier string.
    */
   public static validateCanonical(identifier: string): void {
     if (identifier.length < MIN_IDENTIFIER_LENGTH) {
@@ -91,6 +99,30 @@ export class IdentifierValidator {
 
     if (!this.isCanonical(identifier)) {
       throw new InvalidIdentifierError(identifier);
+    }
+
+    const parts = identifier.split(':');
+
+    if (parts.length !== 3) {
+      throw new InvalidIdentifierError(identifier);
+    }
+
+    const [namespace, type, localId] = parts;
+
+    this.validateNamespace(namespace);
+    this.validateType(type);
+    this.validateLocalId(localId);
+  }
+
+  /**
+   * Returns true if the identifier is fully valid.
+   */
+  public static isValid(identifier: string): boolean {
+    try {
+      this.validateCanonical(identifier);
+      return true;
+    } catch {
+      return false;
     }
   }
 }
