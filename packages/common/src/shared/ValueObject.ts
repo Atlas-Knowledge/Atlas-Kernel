@@ -3,42 +3,74 @@
  *
  * Base Value Object
  *
- * All immutable value objects in Atlas Kernel
- * should extend this class.
+ * Foundation for all immutable value objects
+ * in Atlas Kernel.
  */
-export abstract class ValueObject<TValue> {
-  protected readonly _value: Readonly<TValue>;
 
-  protected constructor(value: TValue) {
-    this._value = Object.freeze(value);
+export abstract class ValueObject<TValue extends object> {
+  protected readonly props: Readonly<TValue>;
+
+  protected constructor(props: TValue) {
+    this.props = Object.freeze({ ...props });
     Object.freeze(this);
   }
 
   /**
-   * Underlying immutable value.
+   * Returns the immutable properties.
    */
-  public get value(): Readonly<TValue> {
-    return this._value;
+  protected get value(): Readonly<TValue> {
+    return this.props;
   }
 
   /**
-   * Equality comparison.
+   * Structural equality.
    */
-  public equals(other: ValueObject<TValue>): boolean {
-    return JSON.stringify(this._value) === JSON.stringify(other.value);
+  public equals(other: this): boolean {
+    return this.deepEqual(this.props, other.props);
   }
 
   /**
    * JSON serialization.
    */
-  public toJSON(): TValue {
-    return this._value;
+  public toJSON(): Readonly<TValue> {
+    return this.props;
   }
 
   /**
-   * String representation.
+   * Deep structural comparison.
    */
-  public toString(): string {
-    return JSON.stringify(this._value);
+  private deepEqual(a: unknown, b: unknown): boolean {
+    if (Object.is(a, b)) {
+      return true;
+    }
+
+    if (
+      typeof a !== 'object' ||
+      typeof b !== 'object' ||
+      a === null ||
+      b === null
+    ) {
+      return false;
+    }
+
+    const keysA = Object.keys(a);
+    const keysB = Object.keys(b);
+
+    if (keysA.length !== keysB.length) {
+      return false;
+    }
+
+    for (const key of keysA) {
+      if (
+        !this.deepEqual(
+          (a as Record<string, unknown>)[key],
+          (b as Record<string, unknown>)[key],
+        )
+      ) {
+        return false;
+      }
+    }
+
+    return true;
   }
 }
