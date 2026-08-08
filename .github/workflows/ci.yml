@@ -37,7 +37,6 @@ jobs:
         uses: actions/setup-node@v5
         with:
           node-version: 22
-          cache: pnpm
 
       - name: Install dependencies
         run: pnpm install --no-frozen-lockfile
@@ -54,16 +53,16 @@ jobs:
       - name: Build
         run: pnpm build
 
-      - name: Check generated lockfile
+      - name: Verify lockfile
         run: |
-          if [ -f pnpm-lock.yaml ]; then
-            echo "pnpm-lock.yaml exists."
-          else
+          if [ ! -f pnpm-lock.yaml ]; then
             echo "ERROR: pnpm-lock.yaml was not generated."
             exit 1
           fi
 
-      - name: Commit generated lockfile
+          echo "pnpm-lock.yaml exists."
+
+      - name: Commit lockfile
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
           if git diff --quiet -- pnpm-lock.yaml; then
