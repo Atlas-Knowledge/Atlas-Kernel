@@ -2,7 +2,7 @@
   "name": "@atlas/common",
   "version": "0.1.0",
   "private": true,
-  "description": "Shared runtime foundation for Atlas Kernel.",
+  "description": "Shared domain and runtime foundation for the Atlas Kernel.",
   "license": "MIT",
   "type": "module",
   "main": "./dist/index.js",
@@ -18,26 +18,15 @@
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "typecheck": "tsc --noEmit",
-    "lint": "biome check .",
-    "format": "biome format . --write",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
+    "lint": "biome check .",
+    "format": "biome format . --write",
+    "typecheck": "tsc --noEmit",
     "clean": "rimraf dist coverage"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.9.4",
-    "@types/node": "^24.3.0",
-    "@vitest/coverage-v8": "^3.2.4",
-    "rimraf": "^6.0.1",
-    "typescript": "^5.9.2",
-    "vitest": "^3.2.4"
-  },
-  "peerDependencies": {
-    "typescript": "^5.9.0"
-  },
-  "engines": {
-    "node": ">=22.0.0"
+    "@vitest/coverage-v8": "^3.2.4"
   }
 }
