@@ -4,15 +4,12 @@
  * Core Domain Entity
  *
  * Base class for Domain-Driven Design Entities.
- *
- * An Entity is identified by its UniqueEntityId,
- * not by the equality of its properties.
  */
 
 import { UniqueEntityId } from './UniqueEntityId';
 
 /**
- * Base properties required by every Entity.
+ * Properties required by every Domain Entity.
  */
 export interface EntityProps {
   readonly id: UniqueEntityId;
@@ -21,12 +18,12 @@ export interface EntityProps {
 /**
  * Base Domain Entity.
  *
- * TProps represents the entity-specific properties.
+ * Entity equality is based on identity, not properties.
  */
 export abstract class Entity<
-  TProps extends object,
+  TProps extends EntityProps,
 > {
-  protected readonly props: TProps;
+  protected readonly props: Readonly<TProps>;
 
   protected constructor(props: TProps) {
     this.props = Object.freeze({
@@ -35,26 +32,21 @@ export abstract class Entity<
   }
 
   /**
-   * Returns the entity's unique identifier.
+   * Returns the unique entity identifier.
    */
   public get id(): UniqueEntityId {
     return this.props.id;
   }
 
   /**
-   * Returns the entity properties.
-   *
-   * The returned object is immutable at the top level.
+   * Returns immutable entity properties.
    */
   public get value(): Readonly<TProps> {
     return this.props;
   }
 
   /**
-   * Determines entity equality by identity.
-   *
-   * Two entities are equal when their IDs are equal,
-   * regardless of their other properties.
+   * Compares entities by identity.
    */
   public equals(other: Entity<TProps>): boolean {
     return this.id.equals(other.id);
