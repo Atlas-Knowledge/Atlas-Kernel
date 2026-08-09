@@ -7,11 +7,7 @@ interface TestValue {
   readonly version: number;
 }
 
-class TestValueObject extends ValueObject<TestValue> {
-  constructor(props: TestValue) {
-    super(props);
-  }
-}
+class TestValueObject extends ValueObject<TestValue> {}
 
 describe('ValueObject', () => {
   it('stores its properties', () => {
@@ -32,9 +28,9 @@ describe('ValueObject', () => {
       version: 1,
     });
 
-    expect(
-      Object.isFrozen(valueObject.value),
-    ).toBe(true);
+    expect(Object.isFrozen(valueObject.value)).toBe(
+      true,
+    );
   });
 
   it('considers structurally equal objects equal', () => {
@@ -87,11 +83,7 @@ describe('ValueObject', () => {
       };
     }
 
-    class NestedValueObject extends ValueObject<NestedValue> {
-      constructor(props: NestedValue) {
-        super(props);
-      }
-    }
+    class NestedValueObject extends ValueObject<NestedValue> {}
 
     const first = new NestedValueObject({
       metadata: {
@@ -118,11 +110,7 @@ describe('ValueObject', () => {
       };
     }
 
-    class NestedValueObject extends ValueObject<NestedValue> {
-      constructor(props: NestedValue) {
-        super(props);
-      }
-    }
+    class NestedValueObject extends ValueObject<NestedValue> {}
 
     const first = new NestedValueObject({
       metadata: {
@@ -146,11 +134,7 @@ describe('ValueObject', () => {
       readonly items: readonly string[];
     }
 
-    class ListValueObject extends ValueObject<ListValue> {
-      constructor(props: ListValue) {
-        super(props);
-      }
-    }
+    class ListValueObject extends ValueObject<ListValue> {}
 
     const first = new ListValueObject({
       items: ['atlas', 'kernel'],
@@ -168,11 +152,7 @@ describe('ValueObject', () => {
       readonly items: readonly string[];
     }
 
-    class ListValueObject extends ValueObject<ListValue> {
-      constructor(props: ListValue) {
-        super(props);
-      }
-    }
+    class ListValueObject extends ValueObject<ListValue> {}
 
     const first = new ListValueObject({
       items: ['atlas', 'kernel'],
