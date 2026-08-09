@@ -63,7 +63,7 @@ export class IdentifierFactory {
 
     const parsed = IdentifierParser.parse(identifier);
 
-    return this.create({
+    return IdentifierFactory.create({
       namespace: parsed.namespace as TNamespace,
       type: parsed.type as TType,
       localId: parsed.localId,
@@ -76,7 +76,7 @@ export class IdentifierFactory {
   public static entity(
     localId: string,
   ): Identifier<'atlas', 'entity'> {
-    return this.create({
+    return IdentifierFactory.create({
       namespace: IdentifierPolicy.DEFAULT_NAMESPACE,
       type: 'entity',
       localId,
@@ -89,7 +89,7 @@ export class IdentifierFactory {
   public static knowledge(
     localId: string,
   ): Identifier<'atlas', 'knowledge'> {
-    return this.create({
+    return IdentifierFactory.create({
       namespace: IdentifierPolicy.DEFAULT_NAMESPACE,
       type: 'knowledge',
       localId,
@@ -102,7 +102,7 @@ export class IdentifierFactory {
   public static evidence(
     localId: string,
   ): Identifier<'atlas', 'evidence'> {
-    return this.create({
+    return IdentifierFactory.create({
       namespace: IdentifierPolicy.DEFAULT_NAMESPACE,
       type: 'evidence',
       localId,
@@ -115,7 +115,7 @@ export class IdentifierFactory {
   public static claim(
     localId: string,
   ): Identifier<'atlas', 'claim'> {
-    return this.create({
+    return IdentifierFactory.create({
       namespace: IdentifierPolicy.DEFAULT_NAMESPACE,
       type: 'claim',
       localId,
@@ -128,7 +128,7 @@ export class IdentifierFactory {
   public static dataset(
     localId: string,
   ): Identifier<'atlas', 'dataset'> {
-    return this.create({
+    return IdentifierFactory.create({
       namespace: IdentifierPolicy.DEFAULT_NAMESPACE,
       type: 'dataset',
       localId,
@@ -141,7 +141,7 @@ export class IdentifierFactory {
   public static observation(
     localId: string,
   ): Identifier<'atlas', 'observation'> {
-    return this.create({
+    return IdentifierFactory.create({
       namespace: IdentifierPolicy.DEFAULT_NAMESPACE,
       type: 'observation',
       localId,
@@ -154,7 +154,7 @@ export class IdentifierFactory {
   public static question(
     localId: string,
   ): Identifier<'atlas', 'question'> {
-    return this.create({
+    return IdentifierFactory.create({
       namespace: IdentifierPolicy.DEFAULT_NAMESPACE,
       type: 'question',
       localId,
@@ -167,7 +167,7 @@ export class IdentifierFactory {
   public static discovery(
     localId: string,
   ): Identifier<'atlas', 'discovery'> {
-    return this.create({
+    return IdentifierFactory.create({
       namespace: IdentifierPolicy.DEFAULT_NAMESPACE,
       type: 'discovery',
       localId,
@@ -180,7 +180,7 @@ export class IdentifierFactory {
   public static user(
     localId: string,
   ): Identifier<'atlas', 'user'> {
-    return this.create({
+    return IdentifierFactory.create({
       namespace: IdentifierPolicy.DEFAULT_NAMESPACE,
       type: 'user',
       localId,
@@ -193,7 +193,7 @@ export class IdentifierFactory {
   public static graph(
     localId: string,
   ): Identifier<'atlas', 'graph'> {
-    return this.create({
+    return IdentifierFactory.create({
       namespace: IdentifierPolicy.DEFAULT_NAMESPACE,
       type: 'graph',
       localId,
@@ -213,10 +213,10 @@ export class IdentifierFactory {
     type: TType,
     localId: string,
   ): Identifier<TNamespace, TType> {
-    return this.create({
+    return IdentifierFactory.create({
       namespace,
       type,
       localId,
     });
   }
-      }
+}
